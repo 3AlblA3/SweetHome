@@ -1,0 +1,14 @@
+{
+  "name": "SweetHome-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for Sweet Home App",
+  "scripts": {
+    "start": "live-server .",
+    "lint": "echo 'No linter configured'"
+  },
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "dotenv": "^17.2.2"
+  }
+}
