@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Frontend for Sweet Home App",
   "scripts": {
-    "start": "live-server .",
+    "start": "npm run start",
     "lint": "echo 'No linter configured'"
   },
   "author": "",
