@@ -5,7 +5,7 @@ const { Op } = require("sequelize");
 // Get all messages between two users
 exports.getMessages = async (req, res) => {
     try {
-        const { userId } = req.auth;
+        const  userId  = req.auth.user_id;
         const { receiverId } = req.params;
 
         const messages = await Message.findAll({
@@ -28,12 +28,12 @@ exports.getMessages = async (req, res) => {
 // Send a new message
 exports.sendMessage = async (req, res) => {
     try {
-        const { userId } = req.auth;
-        const { receiver_id, content } = req.body;
+        const userId = req.auth.user_id;
+        const { conversation_id, content } = req.body;
 
         const message = await Message.create({
             sender_id: userId,
-            receiver_id,
+            conversation_id,
             content
         });
 

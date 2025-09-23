@@ -7,7 +7,9 @@ const Post = sequelize.define(
         content: {type: DataTypes.STRING, allowNull: false},
         user_id: {type: DataTypes.INTEGER, references: {model: 'users', key: 'id'}}
     },
-    {underscored: true}
+    {tableName: 'posts',
+    underscored: true,
+    timestamps: true}
 );
 
 module.exports = Post;

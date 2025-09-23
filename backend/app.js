@@ -8,10 +8,8 @@ const cors = require('cors');
 
 const routeUser = require('./routes/routeUser');
 const routePost = require('./routes/routePost');
-
-// Messaging Routes
-
 const routeMessage = require('./routes/routeMessage');
+const routeConversation = require('./routes/routeConversation');
 
 app.use(express.json());
 app.use(cookieParser());
@@ -27,8 +25,7 @@ app.use(cors({
 
 app.use('/users', routeUser);
 app.use('/posts', routePost);
-
-// Route des messages 
 app.use('/messages', routeMessage);
+app.use('/conversations', routeConversation);
 
 module.exports = app
