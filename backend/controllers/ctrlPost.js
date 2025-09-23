@@ -14,12 +14,15 @@ exports.getAllPosts = async (req, res, next) => {
 
 //Créer un post
 
-
 exports.createPost = async (req, res, next) => {
     try {
-        const newPost = { //Condition s'il y a une image liée avec le post ou non
+        const newPost = req.file ? {
             ...req.body,
             user_id: req.auth.user_id,
+            image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        } : {
+            ...req.body,
+            user_id: req.auth.user_id,  
         }
         const post = await Post.create(newPost);
         res.status(201).json({ message: 'Post created', post });

@@ -1,6 +1,6 @@
 const Message = require("../models/modelMessage");
 const { Op } = require("sequelize");
-
+const fs = require('fs');
 
 // Get all messages between two users
 exports.getMessages = async (req, res) => {
@@ -31,11 +31,18 @@ exports.sendMessage = async (req, res) => {
         const userId = req.auth.user_id;
         const { conversation_id, content } = req.body;
 
-        const message = await Message.create({
+        const newMessage = req.file ? {
+            sender_id: userId,
+            conversation_id,
+            content,
+            image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        } : {
             sender_id: userId,
             conversation_id,
             content
-        });
+        };
+
+        const message = await Message.create(newMessage);
 
         res.status(201).json({ message: "Message sent", data: message });
     } catch (error) {
@@ -60,10 +67,25 @@ exports.markAsRead = async (req, res) => {
 exports.deleteMessage = async (req, res) => {
     try {
         const { id } = req.params;
+        const message = await Message.findByPk(id);
 
-        await Message.destroy({ where: { id } });
+        if (!message) {
+            return res.status(404).json({ message: 'Message not found!' });
+        }
 
-        res.status(200).json({ message: "Message deleted" });
+        if (message.image_url) {
+            const filename = message.image_url.split('/images/')[1];
+            fs.unlink(`images/${filename}`, async (err) => {
+                if (err) {
+                    console.error('Error deleting image:', err);
+                }
+                await Message.destroy({ where: { id } });
+                res.status(200).json({ message: 'Message deleted!' });
+            });
+        } else {
+            await Message.destroy({ where: { id } });
+            res.status(200).json({ message: 'Message deleted!' });
+        }
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

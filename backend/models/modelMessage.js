@@ -7,7 +7,8 @@ const Message = sequelize.define('Message', {
     conversation_id: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'conversations', key: 'id' } },
     seen: { type: DataTypes.BOOLEAN, defaultValue: false },
     content: { type: DataTypes.TEXT, allowNull: false },
-    seen_at: { type: DataTypes.DATE, allowNull: true }
+    seen_at: { type: DataTypes.DATE, allowNull: true },
+    picture_url: { type: DataTypes.STRING, allowNull: true }
 },     
 {tableName: 'messages',
 underscored: true,

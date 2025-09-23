@@ -2,6 +2,7 @@ const User = require("../models/modelUser");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 const path = require('path');
+const fs = require('fs');
 
 // Afficher tout les utilisateurs
 
@@ -135,49 +136,54 @@ exports.getOneUser = async (req, res) => {
     }
 };
 
-//Si l'utilisateur veut modifier les informations de son compte
-
 exports.updateUser = async (req, res) => {
     try {
         const userId = req.params.id;
         const user = await User.findByPk(userId);
-        if (!user) return res.status(404).json({ message: 'User not found!' });
-
-        const updateData = {
-            first_name: req.body.first_name,
-            last_name: req.body.last_name,
-            email: req.body.email,
-            number: req.body.number,
+        if (!user) {
+            return res.status(404).json({ message: 'User not found!' });
+        }
+        const updatedData = req.file ? {
+            ...req.body,
+            picture_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        } : {
+            ...req.body
         };
 
-        // Update du mot de passe si fournit
-        if (req.body.password) {
-            const hash = await bcrypt.hash(req.body.password, 10);
-            updateData.password = hash;
+        if (req.file && user.picture_url) {
+            const filename = user.picture_url.split('/images/')[1];
+            fs.unlink(`images/${filename}`, err => {
+                if (err) console.error('Error deleting old user picture:', err);
+            });
         }
-
-        await User.update(updateData, { where: { id: userId } });
+        await User.update(updatedData, { where: { id: userId } });
         res.status(200).json({ message: 'User updated!' });
-
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
-//Supprimer l'utilisateur
 
 exports.deleteUser = async (req, res) => {
     try {
         const userId = req.params.id;
         const user = await User.findByPk(userId);
-        if (!user) return res.status(404).json({ message: 'User not found!' });
-
-        await User.destroy({ where: { id: userId } });
-        res.status(200).json({ message: 'User deleted!' });
-
+        if (!user) {
+            return res.status(404).json({ message: 'User not found!' });
+        }
+        if (user.picture_url) {
+            const filename = user.picture_url.split('/images/')[1];
+            fs.unlink(`images/${filename}`, async (err) => {
+                if (err) {
+                    console.error('Error deleting user picture:', err);
+                }
+                await User.destroy({ where: { id: userId } });
+                res.status(200).json({ message: 'User deleted!' });
+            });
+        } else {
+            await User.destroy({ where: { id: userId } });
+            res.status(200).json({ message: 'User deleted!' });
+        }
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
-
-
-
