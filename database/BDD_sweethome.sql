@@ -1,4 +1,4 @@
--- Table des utilisateurs
+-- Users Table
 CREATE TABLE Users (
    id INT AUTO_INCREMENT PRIMARY KEY,
    admin BOOLEAN NOT NULL DEFAULT FALSE,
@@ -10,7 +10,7 @@ CREATE TABLE Users (
    password VARCHAR(255) NOT NULL
 );
 
--- Table des messages (expéditeur unique, destinataires dans une autre table)
+-- Messages table (expéditeur unique, destinataires dans une autre table)
 CREATE TABLE Messages (
    id INT AUTO_INCREMENT PRIMARY KEY,
    author_id INT NOT NULL,
@@ -26,19 +26,6 @@ CREATE TABLE Posts (
    content TEXT NOT NULL,
    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
    FOREIGN KEY (user_id) REFERENCES Users(id)
-);
-
--- Table de liaison messages ↔ destinataires
-CREATE TABLE receiver_message (
-   message_id INT NOT NULL,
-   sender_id INT NOT NULL,
-   receiver_id INT NOT NULL,
-   read BOOLEAN NOT NULL DEFAULT FALSE,
-   read__date DATETIME NULL,
-   PRIMARY KEY (message_id, receiver_id, sender_id),
-   FOREIGN KEY (message_id) REFERENCES Messages(id) ON DELETE CASCADE,
-   FOREIGN KEY (receiver_id) REFERENCES Users(id) ON DELETE CASCADE,
-   FOREIGN KEY (sender_id) REFERENCES Users(id) ON DELETE CASCADE
 );
 
 -- ===== Utilisateurs =====
@@ -75,19 +62,3 @@ INSERT INTO Messages (author_id, content)
 VALUES
 (3, 'David, peux-tu revoir mon code ?');
 
--- ===== Receiver_message =====
--- Message 1 (John → Alice et Bob)
-INSERT INTO receiver_message (message_id, sender_id, receiver_id, read, read__date)
-VALUES
-(1, 1, 2, TRUE,  '2025-09-20 10:15:00'),
-(1, 1, 3, FALSE, NULL);
-
--- Message 2 (Alice → Claire)
-INSERT INTO receiver_message (message_id, sender_id, receiver_id, read, read__date)
-VALUES
-(2, 2, 4, FALSE, NULL);
-
--- Message 3 (Bob → David)
-INSERT INTO receiver_message (message_id, sender_id, receiver_id, read, read__date)
-VALUES
-(3, 3, 5, TRUE,  '2025-09-21 14:30:00');
