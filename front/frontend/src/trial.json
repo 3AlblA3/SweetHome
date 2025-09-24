@@ -1,0 +1,99 @@
+{
+    "Users": [
+      {
+        "id": 1,
+        "admin": false,
+        "username": "jdoe",
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@example.com",
+        "phone": "+33611111111",
+        "password": "hashed_pw1"
+      },
+      {
+        "id": 2,
+        "admin": true,
+        "username": "asmith",
+        "first_name": "Alice",
+        "last_name": "Smith",
+        "email": "alice.smith@example.com",
+        "phone": "+33622222222",
+        "password": "hashed_pw2"
+      },
+      {
+        "id": 3,
+        "admin": false,
+        "username": "bwhite",
+        "first_name": "Bob",
+        "last_name": "White",
+        "email": "bob.white@example.com",
+        "phone": "+33633333333",
+        "password": "hashed_pw3"
+      },
+      {
+        "id": 4,
+        "admin": false,
+        "username": "cmartin",
+        "first_name": "Claire",
+        "last_name": "Martin",
+        "email": "claire.martin@example.com",
+        "phone": "+33644444444",
+        "password": "hashed_pw4"
+      },
+      {
+        "id": 5,
+        "admin": false,
+        "username": "dlee",
+        "first_name": "David",
+        "last_name": "Lee",
+        "email": "david.lee@example.com",
+        "phone": "+33655555555",
+        "password": "hashed_pw5"
+      }
+    ],
+    "Posts": [
+      {
+        "id": 1,
+        "user_id": 1,
+        "content": "Hello, c’est mon premier post !"
+      },
+      {
+        "id": 2,
+        "user_id": 2,
+        "content": "Bienvenue sur la plateforme"
+      },
+      {
+        "id": 3,
+        "user_id": 3,
+        "content": "Quelqu’un veut coder en pair ce soir ?"
+      },
+      {
+        "id": 4,
+        "user_id": 4,
+        "content": "Je teste la messagerie privée..."
+      },
+      {
+        "id": 5,
+        "user_id": 5,
+        "content": "Bon lundi à tous !"
+      }
+    ],
+    "Messages": [
+      {
+        "id": 1,
+        "author_id": 1,
+        "content": "Salut Alice et Bob, comment ça va ?"
+      },
+      {
+        "id": 2,
+        "author_id": 2,
+        "content": "Salut Claire, tu es dispo pour une réunion demain ?"
+      },
+      {
+        "id": 3,
+        "author_id": 3,
+        "content": "David, peux-tu revoir mon code ?"
+      }
+    ]
+  }
+  
