@@ -8,6 +8,7 @@ module.exports = async (req, res, next) => {
     if (!conversation) {
       return res.status(404).json({ message: 'Conversation not found!' });
     }
+    // Vérification que l'utilisateur est bien un participant de la conversation
     if (conversation.user1_id !== userId && conversation.user2_id !== userId) {
       return res.status(403).json({ message: 'Forbidden: you are not allowed to do that!' });
     }

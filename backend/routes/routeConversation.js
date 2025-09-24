@@ -4,7 +4,8 @@ const auth = require('../middlewares/auth');
 const checkConversation = require('../middlewares/checkConversation');
 const ctrlConversation = require('../controllers/ctrlConversation');
 
-router.get('/', auth, ctrlConversation.getConversations);
+// On ne mets pas de fonction de modification des conversations.
+router.get('/', auth, checkConversation, ctrlConversation.getConversations);
 router.post('/', auth, ctrlConversation.createConversation);
 router.delete('/:id', auth, checkConversation, ctrlConversation.deleteConversation);
 

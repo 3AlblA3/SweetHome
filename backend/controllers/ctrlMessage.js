@@ -1,19 +1,12 @@
 const Message = require("../models/modelMessage");
-const { Op } = require("sequelize");
 const fs = require('fs');
 
+//Affichage les messages d'une conversation 
 exports.getMessages = async (req, res) => {
     try {
-        const  userId  = req.auth.user_id;
-        const { receiverId } = req.params;
-
+        const { conversationId } = req.params;
         const messages = await Message.findAll({
-            where: {
-                [Op.or]: [
-                    { sender_id: userId, receiver_id: receiverId },
-                    { sender_id: receiverId, receiver_id: userId }
-                ]
-            },
+            where: { conversation_id: conversationId },
             order: [['sent_at', 'ASC']]
         });
 
@@ -23,6 +16,7 @@ exports.getMessages = async (req, res) => {
     }
 };
 
+// Création et envoi d'un message
 exports.sendMessage = async (req, res) => {
     try {
         const userId = req.auth.user_id;

@@ -1,16 +1,16 @@
-const Post = require('../models/modelPost');
+const Message = require('../models/modelMessage');
 
 module.exports = async (req, res, next) => {
     try {
-        const postId = req.params.id; 
-        const post = await Post.findByPk(postId); 
-        if (!post) {
-            return res.status(404).json({ message: 'Post not found!' }); 
+        const messageId = req.params.id; 
+        const message = await Message.findByPk(messageId); 
+        if (!message) {
+            return res.status(404).json({ message: 'Message not found!' }); 
         }   
-        if (post.user_id !== req.auth.user_id && req.auth.role_id !== 3) {
+        if (message.user_id !== req.auth.user_id && req.auth.admin !== true) {
             return res.status(403).json({ message: 'Forbidden: you are not allowed to do that!' });
         }
-        req.post = post;
+        req.message = message;
         next();
     } catch (error) {
         res.status(500).json({ error: error.message });

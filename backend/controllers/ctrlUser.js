@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 const path = require('path');
 const fs = require('fs');
 
+// Afficher tous les utilisateurs
 exports.getAllUsers = async (req, res, next) => {
     try {
         const users = await User.findAll();
@@ -13,6 +14,7 @@ exports.getAllUsers = async (req, res, next) => {
     }
 };
 
+// Afficher l'utilisateur authentifié
 exports.getAuthenticatedUser = async (req, res) => {
     try {
         const userId = req.auth.user_id;
@@ -37,7 +39,6 @@ exports.getAuthenticatedUser = async (req, res) => {
 };
 
 // Créer un compte
-
 exports.signup = async (req, res) => {
     try {
         const existingUser = await User.findOne({
@@ -45,6 +46,7 @@ exports.signup = async (req, res) => {
             paranoid: false
         });
 
+        // Si l'utilisateur existe mais a été supprimé, restaurer le compte: User.restore()
         if (existingUser) {
             if (existingUser.deletedAt) {
                 const passwordValid = await bcrypt.compare(req.body.password, existingUser.password);
@@ -59,6 +61,7 @@ exports.signup = async (req, res) => {
             }
         }
 
+        // Cryptage du mot de passe
         const hash = await bcrypt.hash(req.body.password, 10);
 
         const user = await User.create({ 
@@ -76,6 +79,7 @@ exports.signup = async (req, res) => {
     }
 };
 
+// Connexion: Créer un token et le stocke dans un cookie
 exports.login = async (req, res) => {
     try {
         const user = await User.findOne({ where: { email: req.body.email } });
@@ -85,7 +89,7 @@ exports.login = async (req, res) => {
         if (!valid) return res.status(401).json({ error: 'Invalid email/password!' });
 
         const token = jwt.sign(
-            { user_id: user.id, role_id: user.role_id },
+            { user_id: user.id, admin: user.admin },
             process.env.JWT_SECRET,
             { algorithm: 'HS256', expiresIn: '24h' }
         );
@@ -94,7 +98,7 @@ exports.login = async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', 
             sameSite: 'Strict',
-            maxAge: 24 * 60 * 60 * 1000 // 24 hours
+            maxAge: 24 * 60 * 60 * 1000 // 24 heure de durée de vie du cookie
         });
         res.status(200).json({ message: 'Logged in successfully!' });
     } catch (error) {
@@ -102,6 +106,7 @@ exports.login = async (req, res) => {
     }
 };
 
+// La déconnexion supprime le cookie
 exports.logout = (req, res) => {
     res.clearCookie('token', {
         httpOnly: true,
