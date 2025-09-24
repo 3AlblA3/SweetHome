@@ -4,8 +4,6 @@ const jwt = require('jsonwebtoken')
 const path = require('path');
 const fs = require('fs');
 
-// Afficher tout les utilisateurs
-
 exports.getAllUsers = async (req, res, next) => {
     try {
         const users = await User.findAll();
@@ -15,7 +13,6 @@ exports.getAllUsers = async (req, res, next) => {
     }
 };
 
-// Récupérer les informations de l'utilisateur connecté
 exports.getAuthenticatedUser = async (req, res) => {
     try {
         const userId = req.auth.user_id;
@@ -79,8 +76,6 @@ exports.signup = async (req, res) => {
     }
 };
 
-//Quand l'user se connecte au site
-
 exports.login = async (req, res) => {
     try {
         const user = await User.findOne({ where: { email: req.body.email } });
@@ -95,7 +90,6 @@ exports.login = async (req, res) => {
             { algorithm: 'HS256', expiresIn: '24h' }
         );
 
-        // Set token in HTTP-Only Cookie
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', 
@@ -108,7 +102,6 @@ exports.login = async (req, res) => {
     }
 };
 
-// Déconnexion
 exports.logout = (req, res) => {
     res.clearCookie('token', {
         httpOnly: true,
@@ -117,8 +110,6 @@ exports.logout = (req, res) => {
     });
     res.status(200).json({ message: 'Logged out successfully!' });
 };
-
-//Récupérer les informations d'un user
 
 exports.getOneUser = async (req, res) => {
     try {

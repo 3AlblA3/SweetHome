@@ -1,7 +1,6 @@
 const Conversation = require('../models/modelConversation');
 const { Op } = require('sequelize');
 
-// Get all conversations for a user
 exports.getConversations = async (req, res) => {
   try {
     const userId = req.auth.user_id;
@@ -20,7 +19,6 @@ exports.getConversations = async (req, res) => {
   }
 };
 
-// Create a new conversation (between two users)
 exports.createConversation = async (req, res) => {
   try {
     const userId = req.auth.user_id;
@@ -29,7 +27,6 @@ exports.createConversation = async (req, res) => {
     if (userId === otherUserId) {
       return res.status(400).json({ error: 'Cannot create conversation with yourself.' });
     }
-    // Check if conversation already exists
     let conversation = await Conversation.findOne({
       where: {
           [Op.or]: [
@@ -48,7 +45,6 @@ exports.createConversation = async (req, res) => {
   }
 };
 
-// Delete a conversation (soft delete)
 exports.deleteConversation = async (req, res) => {
   try {
     const { id } = req.params;

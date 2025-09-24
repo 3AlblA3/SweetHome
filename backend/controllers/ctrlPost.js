@@ -1,8 +1,6 @@
 const Post = require("../models/modelPost")
 const fs = require('fs');
 
-//Afficher tout les posts
-
 exports.getAllPosts = async (req, res, next) => {
     try {
         const posts = await Post.findAll();
@@ -11,8 +9,6 @@ exports.getAllPosts = async (req, res, next) => {
         res.status(500).json({ error: error.message });
     }
 };
-
-//Créer un post
 
 exports.createPost = async (req, res, next) => {
     try {
@@ -31,8 +27,6 @@ exports.createPost = async (req, res, next) => {
     }
 };
 
-// Afficher un seul post
-
 exports.getOnePost = async (req, res, next) => {
     try{ 
         const post = await Post.findByPk(req.params.id); 
@@ -45,8 +39,6 @@ exports.getOnePost = async (req, res, next) => {
         res.status(500).json({ error: error.message });
     }
 };
-
-//Mettre à jour un post
 
 exports.updatePost = async (req, res, next) => {
     try {
@@ -62,7 +54,6 @@ exports.updatePost = async (req, res, next) => {
         
         delete postObject.id; 
 
-        // Mettre à jour le post
         await Post.update(postObject, {where: { id: postId }});
 
         res.status(200).json({ message: 'Post modified!' });
@@ -72,20 +63,14 @@ exports.updatePost = async (req, res, next) => {
     }
 };
 
-//Supprimer un post
-
 exports.deletePost = async (req, res, next) => {
     try {
         const postId = req.params.id; 
         const post = await Post.findByPk(postId)
 
-        //Si le post n'existe pas
-
         if (!post) {
             return res.status(404).json({ message: 'Post not found!' });
         }
-
-        // Si le post a une image 
         
         if (post.image_url) {
             const filename = post.image_url.split('/images/')[1];

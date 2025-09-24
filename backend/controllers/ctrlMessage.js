@@ -2,7 +2,6 @@ const Message = require("../models/modelMessage");
 const { Op } = require("sequelize");
 const fs = require('fs');
 
-// Get all messages between two users
 exports.getMessages = async (req, res) => {
     try {
         const  userId  = req.auth.user_id;
@@ -10,8 +9,7 @@ exports.getMessages = async (req, res) => {
 
         const messages = await Message.findAll({
             where: {
-                [Op.or]: [ //Fetches messages The sender_id is userId AND the receiver_id is receiverId
-                    // OR the sender_id is receiverId AND the receiver_id is userId
+                [Op.or]: [
                     { sender_id: userId, receiver_id: receiverId },
                     { sender_id: receiverId, receiver_id: userId }
                 ]
@@ -25,7 +23,6 @@ exports.getMessages = async (req, res) => {
     }
 };
 
-// Send a new message
 exports.sendMessage = async (req, res) => {
     try {
         const userId = req.auth.user_id;
@@ -50,7 +47,6 @@ exports.sendMessage = async (req, res) => {
     }
 };
 
-// Mark message as read
 exports.markAsRead = async (req, res) => {
     try {
         const { id } = req.params;
@@ -63,7 +59,29 @@ exports.markAsRead = async (req, res) => {
     }
 };
 
-// Delete a message
+exports.updateMessage = async (req, res, next) => {
+    try {
+        const messageId = req.params.id;
+        const messageObject = req.file ? {
+            ...req.body,
+            user_id: req.auth.user_id,
+            image_url: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        } : {
+            ...req.body,
+            user_id: req.auth.user_id,
+        }
+        
+        delete messageObject.id; 
+
+        await Message.update(messageObject, {where: { id: messageId }});
+
+        res.status(200).json({ message: 'Message modified!' });
+
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 exports.deleteMessage = async (req, res) => {
     try {
         const { id } = req.params;
