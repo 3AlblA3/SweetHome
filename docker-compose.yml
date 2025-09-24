@@ -1,0 +1,38 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: c53310ee51053c32acb79fc85788990731e89a261d91cb6cee56ce676611961a
+      MYSQL_DATABASE: SweetHome
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "3307:3306"
+  backend:
+    build: ./backend 
+    container_name: backend_app
+    restart: always
+    ports:
+      - "5000:5000" 
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: c53310ee51053c32acb79fc85788990731e89a261d91cb6cee56ce676611961a
+      DB_NAME: SweetHome
+      JWT_SECRET: nk6wmlUrXQiJT6oAt50myRmaAcAKp4RYj1J7kb3HExwaaWtlicFDx3v9UuhWd1HuYX7Bq/5ZzRT0QJIVS/OW6g==
+      NODE_ENV: development
+      FRONTEND_URL: http://localhost:4000
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
