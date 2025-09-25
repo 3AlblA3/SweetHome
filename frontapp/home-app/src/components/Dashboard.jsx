@@ -7,14 +7,17 @@ import userAvatar from "../images/image.webp";
 const Dashboard = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
-  // Fetch posts from backend on mount
+  const [conversations, setConversations] = useState([]);
+  const [userId, setUserId] = useState(null);
+  const [usersMap, setUsersMap] = useState({}); // { userId: {first_name, last_name, ...} }
+  // Fetch posts and conversations from backend on mount
   useEffect(() => {
+    // Fetch posts
     const fetchPosts = async () => {
       try {
         const response = await fetch("http://localhost:5000/posts");
         if (response.ok) {
           let data = await response.json();
-          // Sort by createdAt descending if available
           if (data.length && data[0].createdAt) {
             data = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           }
@@ -26,8 +29,48 @@ const Dashboard = () => {
         setPosts([]);
       }
     };
+
+    // Fetch authenticated user to get userId
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/users/me", { credentials: "include" });
+        if (res.ok) {
+          const user = await res.json();
+          setUserId(user.id);
+        }
+      } catch {}
+    };
+
+    // Fetch conversations and then fetch user info for the other participant
+    const fetchConversationsAndUsers = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/conversations", { credentials: "include" });
+        if (res.ok) {
+          const data = await res.json();
+          setConversations(data);
+          // Find all unique user IDs (other than self)
+          let otherUserIds = [];
+          if (userId) {
+            otherUserIds = data.map(conv => (conv.user1_id === userId ? conv.user2_id : conv.user1_id));
+            // Remove duplicates
+            otherUserIds = [...new Set(otherUserIds)];
+            // Fetch user info for each
+            const userFetches = otherUserIds.map(uid =>
+              fetch(`http://localhost:5000/users/${uid}`, { credentials: "include" })
+                .then(r => r.ok ? r.json() : null)
+            );
+            const users = await Promise.all(userFetches);
+            const map = {};
+            users.forEach(u => { if (u) map[u.id] = u; });
+            setUsersMap(map);
+          }
+        }
+      } catch {}
+    };
+
     fetchPosts();
-  }, []);
+    fetchUser().then(fetchConversationsAndUsers);
+  }, [userId]);
 
   const handleLogout = async () => {
     try {
@@ -84,37 +127,35 @@ const Dashboard = () => {
         <aside className="hidden md:block w-60 bg-gray-100 p-4 overflow-y-auto border-r border-gray-300">
           <h2 className="font-semibold mb-4">Vos dernières conversations</h2>
           <ul>
-            {/* Conversation items */}
-            <li className="p-2 rounded mb-2 hover:bg-blue-200 cursor-pointer flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full border flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-gray-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
+            {conversations.length === 0 && (
+              <li className="text-gray-500">No conversations</li>
+            )}
+            {conversations.map((conv) => {
+              if (!userId) return null;
+              const otherUserId = conv.user1_id === userId ? conv.user2_id : conv.user1_id;
+              const otherUser = usersMap[otherUserId];
+              return (
+                <li
+                  key={conv.id}
+                  className="p-2 rounded mb-2 hover:bg-blue-200 cursor-pointer flex items-center space-x-2"
+                  onClick={() => navigate(`/chat/${conv.id}`)}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A11.955 11.955 0 0112 15c2.5 0 4.81.75 6.879 2.034M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </div>
-              <span>User 1</span>
-            </li>
-            <li className="p-2 rounded mb-2 hover:bg-blue-200 cursor-pointer flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full border flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 text-gray-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A11.955 11.955 0 0112 15c2.5 0 4.81.75 6.879 2.034M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </div>
-              <span>User 2</span>
-            </li>
+                  <div className="w-8 h-8 rounded-full border flex items-center justify-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-gray-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A11.955 11.955 0 0112 15c2.5 0 4.81.75 6.879 2.034M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  <span>{otherUser ? `${otherUser.first_name} ${otherUser.last_name}` : "Unknown"}</span>
+                </li>
+              );
+            })}
           </ul>
         </aside>
 
