@@ -3,13 +3,33 @@ import { useNavigate, Link } from "react-router-dom";
 import logoImage from "../images/home.webp";
 import userAvatar from "../images/image.webp";
 
-
-
-const Header = ({ userPicture }) => {
+const Header = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  const [profilePic, setProfilePic] = useState(null);
 
+  // Récupère la photo de profil de l'utilisateur connecté
+  useEffect(() => {
+    const fetchProfilePic = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/users/me", { credentials: "include" });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.id) {
+          const response = await fetch(`http://localhost:5000/users/${data.id}`, { credentials: "include" });
+          if (!response.ok) return;
+          const user = await response.json();
+          setProfilePic(user && user.picture_url ? user.picture_url : null);
+        }
+      } catch (err) {
+        setProfilePic(null);
+      }
+    };
+    fetchProfilePic();
+  }, []);
+
+  // Déconnexion
   const handleLogout = async () => {
     try {
       const response = await fetch("http://localhost:5000/users/logout", {
@@ -26,7 +46,7 @@ const Header = ({ userPicture }) => {
     }
   };
 
-  // Close menu on outside click
+  //Gestion du menu déroulant 
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -63,7 +83,7 @@ const Header = ({ userPicture }) => {
             onClick={() => setMenuOpen((open) => !open)}
             aria-label="User menu"
           >
-            <img alt="User Avatar" src={userPicture || userAvatar} />
+            <img alt="User Avatar" src={profilePic || userAvatar} />
           </button>
           {menuOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-50 animate-fade-in">
