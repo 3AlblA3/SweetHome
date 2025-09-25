@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import logoImage from "../images/home.webp"; 
 import userAvatar from "../images/image.webp"; 
 
@@ -54,16 +55,13 @@ const Chat = () => {
     <div className="flex flex-col min-h-screen">
       {/* Header */}
       <header className="flex justify-between items-center p-6 bg-white shadow-md">
-        <div className="flex items-center space-x-3">
-          <div className="w-15 h-15 rounded-full bg-blue-200 overflow-hidden flex items-center justify-center">
-            <img src={logoImage} alt="Logo" className="w-10 h-10 object-cover" />
-          </div>
-          <span className="font-semibold text-lg">Dashboard</span>
+        <div className="flex items-center space-x-4">
+            <img src={logoImage} alt="Logo" className="ml-15 w-12 h-12 object-cover" />
         </div>
         <div className="flex items-center space-x-4">
-          <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-            Disconnect
-          </button>
+        <Link to="/" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mr-15">
+          Disconnect
+        </Link>
           <div className="w-10 h-10 rounded-full border border-gray-400 flex items-center justify-center overflow-hidden">
             <img alt="User Avatar" src={userAvatar} />
           </div>

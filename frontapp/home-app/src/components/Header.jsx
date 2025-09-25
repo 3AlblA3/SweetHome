@@ -8,14 +8,8 @@ const Header = () => {
   return (
     <header className="bg-white text-black p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
-      <div className="flex items-center space-x-3">
-          <div className="w-15 h-15 rounded-full bg-blue-200 overflow-hidden flex items-center justify-center">
-            <img
-              src={logoImage}
-              alt="Logo"
-              className="w-10 h-10 object-cover"
-            />
-          </div>
+      <div className="flex items-center space-x-4">
+            <img src={logoImage} alt="Logo" className="w-12 h-12 object-cover" />
         </div>
         <nav className="flex space-x-6">
           <button
