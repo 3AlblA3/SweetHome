@@ -64,7 +64,7 @@ const Header = () => {
   }, [menuOpen]);
 
   return (
-    <header className="flex justify-between items-center p-4 md:p-6 bg-white shadow-md">
+    <header className="sticky top-0 z-50 flex justify-between items-center p-4 md:p-6 bg-white shadow-md">
       <div className="flex items-center space-x-4">
         <Link to="/dashboard">
           <img src={logoImage} alt="Logo" className="ml-4 md:ml-15 w-10 md:w-12 h-10 md:h-12 object-cover" />

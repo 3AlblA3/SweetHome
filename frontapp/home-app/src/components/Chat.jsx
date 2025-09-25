@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
+import Aside from "./Aside";
+import Header from "./Header";
 import logoImage from "../images/home.webp"; 
 import userAvatar from "../images/image.webp";
 
@@ -7,9 +9,13 @@ import userAvatar from "../images/image.webp";
 const Chat = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [conversations, setConversations] = useState([]);
   const [messages, setMessages] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [messageText, setMessageText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [conversationPartner, setConversationPartner] = useState(null);
+  const [conversation, setConversation] = useState(null);
+
   // Fetch current user id on mount
   useEffect(() => {
     fetch("http://localhost:5000/users/me", { credentials: "include" })
@@ -18,34 +24,18 @@ const Chat = () => {
         if (data && data.id) setCurrentUserId(data.id);
       });
   }, []);
-  const [messageText, setMessageText] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  // Fetch conversations list on mount
-  useEffect(() => {
-    const fetchConversations = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/conversations", { credentials: "include" });
-        if (res.ok) {
-          const data = await res.json();
-          setConversations(data);
-        } else {
-          setConversations(dummyConversations);
-        }
-      } catch {
-        setConversations(dummyConversations);
-      }
-    };
-    fetchConversations();
-  }, []);
 
   // Fetch messages for selected conversation
   useEffect(() => {
     if (!id) {
       setMessages([]);
+      setConversation(null);
+      setConversationPartner(null);
       return;
     }
     setLoading(true);
+    
+    // Fetch messages
     fetch(`http://localhost:5000/messages/${id}`, { credentials: "include" })
       .then(res => res.ok ? res.json() : [])
       .then(data => {
@@ -56,12 +46,38 @@ const Chat = () => {
         setMessages([]);
         setLoading(false);
       });
-  }, [id]);
 
-  // Find selected conversation object
-  const selectedConversation = id
-    ? conversations.find((c) => String(c.id) === String(id))
-    : null;
+    // Fetch conversation details to get partner info
+    if (currentUserId) {
+      fetch("http://localhost:5000/conversations", { credentials: "include" })
+        .then(res => res.ok ? res.json() : [])
+        .then(conversations => {
+          const currentConv = conversations.find(conv => String(conv.id) === String(id));
+          if (currentConv) {
+            setConversation(currentConv);
+            // Determine the other user ID
+            const otherUserId = currentConv.user1_id === currentUserId ? currentConv.user2_id : currentConv.user1_id;
+            
+            // Fetch the other user's details
+            fetch(`http://localhost:5000/users/${otherUserId}`, { credentials: "include" })
+              .then(res => res.ok ? res.json() : null)
+              .then(user => {
+                if (user) {
+                  setConversationPartner(user);
+                }
+              })
+              .catch(() => setConversationPartner(null));
+          }
+        })
+        .catch(() => {
+          setConversation(null);
+          setConversationPartner(null);
+        });
+    }
+  }, [id, currentUserId]);
+
+  // Find selected conversation (we'll get this from props or context later if needed)
+  const selectedConversation = null; // Simplified for now since Aside handles navigation
 
   const sendMessage = async () => {
     if (!messageText.trim() || !id) return;
@@ -86,45 +102,14 @@ const Chat = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
-      <header className="flex justify-between items-center p-6 bg-white shadow-md">
-        <div className="flex items-center space-x-4">
-        <Link to="/dashboard">
-    <img src={logoImage} alt="Logo" className="w-12 h-12 object-cover" />
-  </Link>
-        </div>
-        <div className="flex items-center space-x-4">
-        <Link to="/" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mr-15">
-          Disconnect
-        </Link>
-          <div className="w-10 h-10 rounded-full border border-gray-400 flex items-center justify-center overflow-hidden">
-            <img alt="User Avatar" src={userAvatar} />
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Main content */}
       <div className="flex flex-1 overflow-hidden bg-gray-50">
         {/* Conversations sidebar */}
-        <aside className="w-64 bg-white p-4 overflow-y-auto border border-blue-400">
-          <h2 className="text-blue-400 text-3xl font-bold mb-6">Messages</h2>
-          
-          <ul>
-            {conversations.length === 0 && <li className="text-gray-400">No conversations</li>}
-            {conversations.map((conv) => (
-              <li
-                key={conv.id}
-                onClick={() => navigate(`/chat/${conv.id}`)}
-                className={`cursor-pointer p-3 rounded mb-3 ${
-                  String(conv.id) === String(id)
-                    ? "bg-blue-500 text-white"
-                    : "hover:bg-blue-100 text-gray-800"
-                }`}
-              >
-                {conv.name || `Conversation #${conv.id}`}
-              </li>
-            ))}
-          </ul>
-        </aside>
+        <div className="sticky top-16 h-[calc(100vh-4rem)]">
+          <Aside />
+        </div>
 
         {/* Chat area */}
         <main className="flex-1 flex flex-col bg-blue-400">
@@ -134,13 +119,13 @@ const Chat = () => {
             </div>
           )}
 
-          {id && selectedConversation && (
+          {id && (
             <>
               <header className="flex items-center p-4 border-b border-gray-200 font-semibold text-lg text-gray-900">
-                Chat with {selectedConversation.name || `Conversation #${selectedConversation.id}`}
+                Chat with {conversationPartner ? `${conversationPartner.first_name} ${conversationPartner.last_name}` : `User #${id}`}
               </header>
 
-              // Loading and messages area
+              {/* // Loading and messages area */}
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 {loading ? (
                   <div className="text-gray-400">Loading messages...</div>
@@ -155,7 +140,7 @@ const Chat = () => {
                         className={`flex ${isSentByUser ? 'justify-end' : 'justify-start'}`}
                       >
 
-                        // Message bubble
+                        {/* // Message bubble */}
                         <div
                           className={`max-w-xs rounded-md p-3 mb-2 '
                             ${isSentByUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}
@@ -174,7 +159,7 @@ const Chat = () => {
                 )}
               </div>
 
-              // Area where user can type and send new messages
+              {/* // Area where user can type and send new messages */}
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
