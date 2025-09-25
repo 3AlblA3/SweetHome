@@ -1,4 +1,6 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import logoImage from "../images/home.webp";
+import userAvatar from "../images/image.webp";
 
 const Modify_Profile = () => {
   const navigate = useNavigate();
@@ -9,7 +11,23 @@ const Modify_Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-blue-500 px-6 py-10">
+    <div className="min-h-screen bg-blue-400 flex flex-col">
+      {/* Header */}
+      <header className="flex justify-between items-center p-4 md:p-6 bg-white shadow-md">
+        <div className="flex items-center space-x-4">
+        <Link to="/dashboard">
+    <img src={logoImage} alt="Logo" className="w-12 h-12 object-cover" />
+  </Link>
+        </div>
+        <div className="flex items-center space-x-4">
+          <Link to="/" className="bg-blue-500 hover:bg-blue-600 text-white px-3 md:px-4 py-2 rounded mr-4 md:mr-15 text-sm md:text-base">
+            Disconnect
+          </Link>
+          <div className="w-10 h-10 rounded-full border border-gray-400 flex items-center justify-center overflow-hidden">
+            <img alt="User Avatar" src={userAvatar} />
+          </div>
+        </div>
+      </header>
       <h2 className="text-center text-white text-3xl font-bold mb-12">
         Here you can change your profile.
       </h2>

@@ -15,7 +15,9 @@ const Profile = () => {
       {/* Header */}
       <header className="flex justify-between items-center p-4 md:p-6 bg-white shadow-md">
         <div className="flex items-center space-x-4">
-          <img src={logoImage} alt="Logo" className="ml-4 md:ml-15 w-10 md:w-12 h-10 md:h-12 object-cover" />
+        <Link to="/dashboard">
+    <img src={logoImage} alt="Logo" className="w-12 h-12 object-cover" />
+  </Link>
         </div>
         <div className="flex items-center space-x-4">
           <Link to="/" className="bg-blue-500 hover:bg-blue-600 text-white px-3 md:px-4 py-2 rounded mr-4 md:mr-15 text-sm md:text-base">
