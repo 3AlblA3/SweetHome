@@ -17,7 +17,7 @@ const Welcome = () => {
   return (
     <>
       <Header />
-      <div className="flex justify-center items-center min-h-[90vh] ">
+      <div className="flex justify-center items-center min-h-[90vh] bg-blue-400">
         <div
           className="rounded-xl shadow-xl p-8 flex flex-col items-center w-full max-w-3xl min-h-[60vh]"
           style={{ backgroundImage: `url(${bgImage})` }}
@@ -28,13 +28,13 @@ const Welcome = () => {
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
             <div className="flex space-x-4 mt-4 absolute">
               <button
-                className="bg-brandBlue text-white px-6 py-2 rounded-md font-semibold hover:bg-brandBlue-500"
+                className="bg-blue-400 text-white px-6 py-2 rounded-md font-semibold hover:bg-brandBlue-500"
                 onClick={handleLoginSubmit}  // must be onClick
               >
                 Log in
               </button>
               <button
-                className="bg-brandBlue text-white px-6 py-2 rounded-md font-semibold hover:bg-brandBlue-500"
+                className="bg-blue-400 text-white px-6 py-2 rounded-md font-semibold hover:bg-brandBlue-500"
                 onClick={handleRegisterSubmit}  // must be onClick
               >
                 Sign up

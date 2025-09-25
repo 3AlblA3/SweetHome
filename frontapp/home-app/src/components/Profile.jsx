@@ -1,48 +1,44 @@
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Profile = () => {
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Here you would typically handle form submission, e.g., send data to your server
-    // After successful saving, navigate to the homepage
+  const handleManageAccount = (e) => {
+    e.preventDefault();
     navigate('/modify_profile');
-  }
+  };
 
   return (
-    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-    <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">Welcome to your profile.</h2>
-  </div>
+    <div className="min-h-screen bg-gradient-to-r from-blue-600 to-indigo-700 flex flex-col items-center justify-center p-6">
+      <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-8">
+        <div className="flex flex-col items-center">
+          <img
+            src="/path-to-profile-photo.jpg"
+            alt="Profile Picture"
+            className="rounded-full w-32 h-32 object-cover border-4 border-indigo-500"
+          />
+          <h1 className="mt-4 text-3xl font-semibold text-gray-800">John Doe</h1>
+          <p className="text-sm text-gray-500">John.Doe@test.com</p>
+        </div>
 
-<div class="mx-auto right-0 mt-2 w-60">
-    <div class="bg-white rounded overflow-hidden shadow-lg">
-        <div class="text-center p-6 bg-sky-400 border-b">
-                    <div class="shrink-0 mt-5">
-                        <img aria-hidden="true" role="img" class="h-24 w-24 text-white rounded-full mx-auto" width="32" height="32"  src="" alt="Current profile photo"/>
-                    </div> 
-                    <p class="pt-2 text-lg font-semibold text-gray-50">John Doe</p>
-                    <p class="text-sm text-gray-100">John.Doe@test.com</p>
-                    <div class="mt-5">
-                        <form onSubmit={handleSubmit}>
-                            <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Manage your account</button>
-                        </form>
-                    </div>
-                    <div>
-                        <button type="submit" class="mt-5 flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"><Link to="/modify_password" font-bold>change your password</Link></button>
-                    </div>
-                    </div>
-                    
+        <form className="mt-8" onSubmit={handleManageAccount}>
+          <button
+            type="submit"
+            className="w-full py-3 rounded-md bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition"
+          >
+            Manage Your Account
+          </button>
+        </form>
+
+        <Link
+          to="/modify_password"
+          className="block w-full text-center mt-4 py-3 rounded-md bg-gray-100 text-indigo-600 font-semibold hover:bg-gray-200 transition"
+        >
+          Change Your Password
+        </Link>
+      </div>
     </div>
-</div>
-
-</div>
-  )
-}
+  );
+};
 
 export default Profile;
-
-
-

@@ -5,81 +5,110 @@ const Modify_Profile = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Here you would typically handle form submission, e.g., send data to your server
-    // After successful saving, navigate to the homepage
-    navigate('/homepage');
-  }
+    navigate('/dashboard');
+  };
 
   return (
-    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-    <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">Here you can change your profile.</h2>
-  </div>
+    <div className="min-h-screen bg-blue-500 px-6 py-10">
+      <h2 className="text-center text-white text-3xl font-bold mb-12">
+        Here you can change your profile.
+      </h2>
 
-  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm justify-center">
-    <form action="#" method="POST" class="space-y-6">
-          <div class="shrink-0 mt-5">
-            <img class="h-20 w-20 object-cover rounded-full" src="" alt="Current profile photo"/>
-        </div> 
-        <label class="block pt-2">
-            <span class="sr-only t-2">Choose profile photo</span>
-            <input type="file" class="w-full text-sm text-slate-500
-              file:mr-4 file:py-2 file:px-4
-              file:rounded-full file:border-0
-              file:text-sm file:font-semibold
-              file:bg-indigo-500 file:text-sm/6 font-medium text-white
-              hover:file:bg-indigo-400
-            "/>
-      </label>
-  <div>
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-4xl mx-auto space-y-6 text-gray-900"
+        noValidate
+      >
+        {/* Profile photo */}
+        <div className="flex justify-center mb-6">
+          <img
+            src=""
+            alt="Current profile photo"
+            className="h-24 w-24 rounded-full object-cover border-4 border-indigo-600"
+          />
+        </div>
 
-</div>
+        <label className="block mb-8">
+          <span className="sr-only">Choose profile photo</span>
+          <input
+            type="file"
+            className="block w-full text-sm text-gray-200
+                      file:mr-4 file:py-2 file:px-4
+                      file:rounded-full file:border-0
+                      file:text-sm file:font-semibold
+                      file:bg-indigo-600 file:text-white
+                      hover:file:bg-indigo-500"
+          />
+        </label>
 
-<label class="relative block p-3 border-2 mt-5 border-black rounded bg-white" htmlFor="name">
-      <span class="text-md font-semibold text-zinc-900" htmlFor="name">
-    First Name
-  </span>
+        {/* Inputs for first and last name side by side */}
+        <div className="flex flex-col md:flex-row md:space-x-6">
+          <label className="flex-1 bg-white rounded-lg p-4 shadow-sm">
+            <span className="block text-gray-700 font-semibold mb-2">
+              First Name
+            </span>
+            <input
+              type="text"
+              name="first-name"
+              id="first-name"
+              required
+              autoComplete="given-name"
+              placeholder="Write Your First Name"
+              className="w-full rounded-md border border-gray-300 p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </label>
+          <label className="flex-1 bg-white rounded-lg p-4 shadow-sm mt-6 md:mt-0">
+            <span className="block text-gray-700 font-semibold mb-2">Last Name</span>
+            <input
+              type="text"
+              name="last-name"
+              id="last-name"
+              required
+              autoComplete="family-name"
+              placeholder="Write Your Last Name"
+              className="w-full rounded-md border border-gray-300 p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </label>
+        </div>
 
-  <input class="w-full   p-0 text-sm border-none bg-white text-gray-500 focus:outline-none" id="first-name" type="name" name="first-name" required autocomplete="first-name" placeholder="Write Your First Name" />
-</label>
+        {/* Email input */}
+        <label className="block bg-white rounded-lg p-4 shadow-sm">
+          <span className="block text-gray-700 font-semibold mb-2">Email</span>
+          <input
+            type="email"
+            name="email"
+            id="email"
+            required
+            autoComplete="email"
+            placeholder="Write Your Email"
+            className="w-full rounded-md border border-gray-300 p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </label>
 
-<label class="relative block p-3 border-2 mt-5 border-black rounded bg-white" htmlFor="name">
-      <span class="text-md font-semibold text-zinc-900" htmlFor="name">
-    Last Name
-  </span>
+        {/* Phone number input */}
+        <label className="block bg-white rounded-lg p-4 shadow-sm">
+          <span className="block text-gray-700 font-semibold mb-2">Phone number</span>
+          <input
+            type="tel"
+            name="phone-number"
+            id="phone-number"
+            required
+            autoComplete="tel"
+            placeholder="Write Your Phone number"
+            className="w-full rounded-md border border-gray-300 p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </label>
 
-  <input class="w-full   p-0 text-sm border-none bg-white text-gray-500 focus:outline-none" id="last-name" type="name" name="last-name" required autocomplete="last-name" placeholder="Write Your Last Name" />
-</label>
-
-<label class="relative block p-3 border-2 mt-5 border-black rounded bg-white" htmlFor="name">
-      <span class="text-md font-semibold text-zinc-900" htmlFor="name">
-    Email
-  </span>
-
-  <input class="w-full   p-0 text-sm border-none bg-white text-gray-500 focus:outline-none" id="email" type="email" name="email" required autocomplete="email" placeholder="Write Your Email" />
-</label>
-
-<label class="relative block p-3 border-2 mt-5 border-black rounded bg-white" htmlFor="name">
-      <span class="text-md font-semibold text-zinc-900" htmlFor="name">
-    Phone number
-  </span>
-
-  <input class="w-full   p-0 text-sm border-none bg-white text-gray-500 focus:outline-none" id="phone-number" type="text" name="phone-number" required autocomplete="phone-number" placeholder="Write Your Phone number" />
-</label>
-
-     <div>
-        <form onSubmit={handleSubmit}>
-        <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Save</button>
-        </form>
-      </div>
-    </form>
-
-  </div>
-</div>
-  )
-}
+        {/* Submit button */}
+        <button
+          type="submit"
+          className="w-full py-4 bg-indigo-600 text-white text-lg font-semibold rounded-lg hover:bg-indigo-500 transition"
+        >
+          Save
+        </button>
+      </form>
+    </div>
+  );
+};
 
 export default Modify_Profile;
-
-
-

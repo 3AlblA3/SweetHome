@@ -1,64 +1,91 @@
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Modify_Password = () => {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
+  });
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Here you would typically handle form submission, e.g., send data to your server
-    // After successful saving, navigate to the homepage
-    navigate('/homepage');
-  }
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Add validation logic here if needed
+    navigate("/homepage");
+  };
 
   return (
-    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-    <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">Here you change your password.</h2>
-  </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-blue-300 p-10 flex flex-col items-center justify-start pt-24">
+      <h2 className="text-white text-4xl font-bold mb-12 w-full max-w-xl text-center">
+        Change Your Password
+      </h2>
 
-  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm justify-center">
-    <form action="#" method="POST" class="space-y-6">
-  <div>
+      <form onSubmit={handleSubmit} className="w-full max-w-xl space-y-10 bg-white rounded-2xl p-10 shadow-2xl">
+        {/* Old Password */}
+        <div className="flex flex-col space-y-3">
+          <label htmlFor="oldPassword" className="text-gray-700 font-semibold">
+            Old Password
+          </label>
+          <input
+            id="oldPassword"
+            name="oldPassword"
+            type="password"
+            required
+            placeholder="Enter your old password"
+            value={formData.oldPassword}
+            onChange={handleChange}
+            className="px-6 py-4 border-2 border-gray-300 rounded-xl text-gray-800 text-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400 outline-none transition"
+          />
+        </div>
 
-</div>
+        {/* New Password */}
+        <div className="flex flex-col space-y-3">
+          <label htmlFor="newPassword" className="text-gray-700 font-semibold">
+            New Password
+          </label>
+          <input
+            id="newPassword"
+            name="newPassword"
+            type="password"
+            required
+            placeholder="Enter your new password"
+            value={formData.newPassword}
+            onChange={handleChange}
+            className="px-6 py-4 border-2 border-gray-300 rounded-xl text-gray-800 text-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400 outline-none transition"
+          />
+        </div>
 
-<label class="relative block p-3 border-2 mt-5 border-black rounded bg-white" htmlFor="name">
-      <span class="text-md font-semibold text-zinc-900" htmlFor="name">
-    Old Password
-  </span>
+        {/* Confirm New Password */}
+        <div className="flex flex-col space-y-3">
+          <label htmlFor="confirmNewPassword" className="text-gray-700 font-semibold">
+            Confirm New Password
+          </label>
+          <input
+            id="confirmNewPassword"
+            name="confirmNewPassword"
+            type="password"
+            required
+            placeholder="Confirm your new password"
+            value={formData.confirmNewPassword}
+            onChange={handleChange}
+            className="px-6 py-4 border-2 border-gray-300 rounded-xl text-gray-800 text-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400 outline-none transition"
+          />
+        </div>
 
-  <input class="w-full   p-0 text-sm border-none bg-white text-gray-500 focus:outline-none" id="old_password" type="password" name="old_password" required autocomplete="old_password" placeholder="Write Your Old Password" />
-</label>
-
-<label class="relative block p-3 border-2 mt-5 border-black rounded bg-white" htmlFor="name">
-      <span class="text-md font-semibold text-zinc-900" htmlFor="name">
-    New Password
-  </span>
-
-  <input class="w-full   p-0 text-sm border-none bg-white text-gray-500 focus:outline-none" id="new_password" type="password" name="new_password" required autocomplete="new_password" placeholder="Write Your New Password" />
-</label>
-
-<label class="relative block p-3 border-2 mt-5 border-black rounded bg-white" htmlFor="name">
-      <span class="text-md font-semibold text-zinc-900" htmlFor="name">
-    Confirm New Password
-  </span>
-
-  <input class="w-full   p-0 text-sm border-none bg-white text-gray-500 focus:outline-none" id="confirm_new_password" type="password" name="confirm_new_password" required autocomplete="confirm_new_password" placeholder="Confirm your New Password" />
-</label>
-
-     <div>
-        <form onSubmit={handleSubmit}>
-        <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Save</button>
-        </form>
-      </div>
-    </form>
-
-  </div>
-</div>
-  )
-}
+        <button
+          type="submit"
+          className="w-full bg-indigo-600 py-5 rounded-xl text-white font-semibold text-xl hover:bg-indigo-500 transition shadow-lg"
+        >
+          Save
+        </button>
+      </form>
+    </div>
+  );
+};
 
 export default Modify_Password;
-
-
-
