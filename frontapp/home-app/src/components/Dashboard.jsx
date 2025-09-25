@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import logoImage from "../images/home.webp";
 import userAvatar from "../images/image.webp";
 
-
 const Dashboard = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
