@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import logoImage from "../images/home.webp";
+import userAvatar from "../images/image.webp";
 
 const Modify_Password = () => {
   const navigate = useNavigate();
@@ -20,11 +22,32 @@ const Modify_Password = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-blue-300 p-10 flex flex-col items-center justify-start pt-24">
-      <h2 className="text-white text-4xl font-bold mb-12 w-full max-w-xl text-center">
-        Change Your Password
-      </h2>
+    <div className="min-h-screen bg-gradient-to-br from-blue-400 to-blue-50  flex flex-col">
+  {/* Header */}
+  <header className="flex justify-between items-center p-4 md:p-6 bg-white shadow-md">
+    <div className="flex items-center space-x-4">
+    <Link to="/dashboard">
+    <img src={logoImage} alt="Logo" className="w-12 h-12 object-cover" />
+  </Link>
+    </div>
+    <div className="flex items-center space-x-4">
+      <Link to="/" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+        Disconnect
+      </Link>
+      <div className="w-10 h-10 rounded-full border border-gray-400 flex items-center justify-center overflow-hidden">
+        <img alt="User Avatar" src={userAvatar} />
+      </div>
+    </div>
+  </header>
 
+  <div className="flex items-start justify-center space-x-10 px-8">
+  <h2 className="text-white text-4xl font-bold mb-0 max-w-xl">
+    Change Your Password
+  </h2>
+  </div>
+
+
+      <div className="flex items-start justify-center p-4 pt-20">
       <form onSubmit={handleSubmit} className="w-full max-w-xl space-y-10 bg-white rounded-2xl p-10 shadow-2xl">
         {/* Old Password */}
         <div className="flex flex-col space-y-3">
@@ -84,6 +107,7 @@ const Modify_Password = () => {
           Save
         </button>
       </form>
+      </div>
     </div>
   );
 };
