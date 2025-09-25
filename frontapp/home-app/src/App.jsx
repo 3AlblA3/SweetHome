@@ -13,14 +13,15 @@ function App() {
   return (
     <div className="App bg-brandBlue min-h-screen">
       <Routes>
-        <Route path="/" element={<Welcome/>}/>
-        <Route path="/register" element={<Register/>}/>
-        <Route path="/sign" element={<Sign/>}/>
-        <Route path="/chat" element={<Chat/>}/>
-        <Route path="/dashboard" element={<Dashboard/>}/>
-        <Route path="/profile" element={<Profile/>}/>
-        <Route path="/modify_profile" element={<Modify_Profile/>}/>
-        <Route path="/modify_password" element={<Modify_Password/>}/>
+        <Route path="/" element={<Welcome/>} />
+        <Route path="/register" element={<Register/>} />
+        <Route path="/sign" element={<Sign/>} />
+  <Route path="/chat" element={<Chat />} />
+  <Route path="/chat/:id" element={<Chat />} />        
+        <Route path="/dashboard" element={<Dashboard/>} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/modify_profile" element={<Modify_Profile />} />
+        <Route path="/profile/modify_password" element={<Modify_Password />} />
       </Routes>
     </div>
   );

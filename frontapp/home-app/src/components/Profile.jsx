@@ -2,6 +2,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import logoImage from "../images/home.webp";
 import userAvatar from "../images/image.webp";
+import { Outlet } from "react-router-dom";
+import Header from "./Header";
+
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -37,29 +40,13 @@ const Profile = () => {
 
   const handleManageAccount = (e) => {
     e.preventDefault();
-    navigate('/modify_profile');
+    navigate('modify_profile'); // relative path for nested route
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-400 to-blue-200 flex flex-col ">
       {/* Header */}
-      <header className="flex justify-between items-center p-4 md:p-6 bg-white shadow-md">
-        <div className="flex items-center space-x-4">
-          <img src={logoImage} alt="Logo" className="ml-4 md:ml-15 w-10 md:w-12 h-10 md:h-12 object-cover" />
-        </div>
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={handleLogout}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-3 md:px-4 py-2 rounded mr-4 md:mr-15 text-sm md:text-base"
-          >
-            Disconnect
-          </button>
-          <div className="w-10 h-10 rounded-full border border-gray-400 flex items-center justify-center overflow-hidden">
-            <img alt="User Avatar" src={userAvatar} />
-          </div>
-        </div>
-      </header>
-
+      <Header />
       {/* Profile Card */}
       <div className="flex items-start justify-center min-h-screen p-4 pt-30">
         <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-8 ">
@@ -74,7 +61,6 @@ const Profile = () => {
             </h1>
             <p className="text-sm text-gray-500">{user ? user.email : '...'}</p>
           </div>
-
           <form className="mt-8" onSubmit={handleManageAccount}>
             <button
               type="submit"
@@ -83,13 +69,13 @@ const Profile = () => {
               Manage Your Account
             </button>
           </form>
-
           <Link
-            to="/modify_password"
+            to="modify_password" // relative path for nested route
             className="block w-full text-center mt-4 py-3 rounded-md bg-gray-100 text-indigo-600 font-semibold hover:bg-gray-200 transition"
           >
             Change Your Password
           </Link>
+          <Outlet />
         </div>
       </div>
     </div>

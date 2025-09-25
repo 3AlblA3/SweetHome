@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import logoImage from "../images/home.webp";
+import Header from "./Header";
 import userAvatar from "../images/image.webp";
 
 const Dashboard = () => {
@@ -71,21 +71,6 @@ const Dashboard = () => {
     fetchUser().then(fetchConversationsAndUsers);
   }, [userId]);
 
-  const handleLogout = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/users/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-      if (response.ok) {
-        navigate("/");
-      } else {
-        alert("Logout failed");
-      }
-    } catch (error) {
-      alert("Logout error");
-    }
-  };
 
   const [inputValue, setInputValue] = useState("");
 
@@ -103,22 +88,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="flex justify-between items-center p-4 md:p-6 bg-white shadow-md">
-        <div className="flex items-center space-x-4">
-          <img src={logoImage} alt="Logo" className="ml-4 md:ml-15 w-10 md:w-12 h-10 md:h-12 object-cover" />
-        </div>
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={handleLogout}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-3 md:px-4 py-2 rounded mr-4 md:mr-15 text-sm md:text-base"
-          >
-            Disconnect
-          </button>
-          <div className="w-10 h-10 rounded-full border border-gray-400 flex items-center justify-center overflow-hidden">
-            <img alt="User Avatar" src={userAvatar} />
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Main content */}
       <div className="flex flex-1 overflow-hidden">

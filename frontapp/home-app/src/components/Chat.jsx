@@ -1,54 +1,87 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import logoImage from "../images/home.webp"; 
 import userAvatar from "../images/image.webp"; 
 
-const dummyConversations = [
-  {
-    id: 1,
-    name: "Alice",
-    messages: [
-      { from: "Alice", text: "Hi there!" },
-      { from: "You", text: "Hello Alice!" },
-    ],
-  },
-  {
-    id: 2,
-    name: "Bob",
-    messages: [
-      { from: "Bob", text: "Hey!" },
-      { from: "You", text: "Hey Bob, what's up?" },
-    ],
-  },
-];
+// Dummy conversations for fallback/demo
 
 const Chat = () => {
-  const [conversations, setConversations] = useState(dummyConversations);
-  const [selectedConversationId, setSelectedConversationId] = useState(null);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [conversations, setConversations] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [currentUserId, setCurrentUserId] = useState(null);
+  // Fetch current user id on mount
+  useEffect(() => {
+    fetch("http://localhost:5000/users/me", { credentials: "include" })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data && data.id) setCurrentUserId(data.id);
+      });
+  }, []);
   const [messageText, setMessageText] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const selectedConversation = conversations.find(
-    (c) => c.id === selectedConversationId
-  );
-
-  const sendMessage = () => {
-    if (!messageText.trim() || !selectedConversationId) return;
-
-    const updatedConversations = conversations.map((conversation) => {
-      if (conversation.id === selectedConversationId) {
-        return {
-          ...conversation,
-          messages: [
-            ...conversation.messages,
-            { from: "You", text: messageText.trim() },
-          ],
-        };
+  // Fetch conversations list on mount
+  useEffect(() => {
+    const fetchConversations = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/conversations", { credentials: "include" });
+        if (res.ok) {
+          const data = await res.json();
+          setConversations(data);
+        } else {
+          setConversations(dummyConversations);
+        }
+      } catch {
+        setConversations(dummyConversations);
       }
-      return conversation;
-    });
+    };
+    fetchConversations();
+  }, []);
 
-    setConversations(updatedConversations);
-    setMessageText("");
+  // Fetch messages for selected conversation
+  useEffect(() => {
+    if (!id) {
+      setMessages([]);
+      return;
+    }
+    setLoading(true);
+    fetch(`http://localhost:5000/messages/${id}`, { credentials: "include" })
+      .then(res => res.ok ? res.json() : [])
+      .then(data => {
+        setMessages(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setMessages([]);
+        setLoading(false);
+      });
+  }, [id]);
+
+  // Find selected conversation object
+  const selectedConversation = id
+    ? conversations.find((c) => String(c.id) === String(id))
+    : null;
+
+  const sendMessage = async () => {
+    if (!messageText.trim() || !id) return;
+    try {
+      const res = await fetch("http://localhost:5000/messages", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ conversation_id: id, content: messageText.trim() })
+      });
+      if (res.ok) {
+        setMessageText("");
+        // Refetch messages after sending
+        const updated = await res.json();
+        fetch(`http://localhost:5000/messages/${id}`, { credentials: "include" })
+          .then(r => r.ok ? r.json() : [])
+          .then(setMessages);
+      }
+    } catch {}
   };
 
   return (
@@ -76,17 +109,18 @@ const Chat = () => {
         <aside className="w-64 bg-white p-4 overflow-y-auto border-r border-gray-300">
           <h2 className="text-gray-900 font-semibold mb-6">Messages</h2>
           <ul>
+            {conversations.length === 0 && <li className="text-gray-400">No conversations</li>}
             {conversations.map((conv) => (
               <li
                 key={conv.id}
-                onClick={() => setSelectedConversationId(conv.id)}
+                onClick={() => navigate(`/chat/${conv.id}`)}
                 className={`cursor-pointer p-3 rounded mb-3 ${
-                  conv.id === selectedConversationId
+                  String(conv.id) === String(id)
                     ? "bg-blue-500 text-white"
                     : "hover:bg-blue-100 text-gray-800"
                 }`}
               >
-                {conv.name}
+                {conv.name || `Conversation #${conv.id}`}
               </li>
             ))}
           </ul>
@@ -94,31 +128,47 @@ const Chat = () => {
 
         {/* Chat area */}
         <main className="flex-1 flex flex-col bg-white">
-          {!selectedConversation && (
+          {!id && (
             <div className="flex items-center justify-center h-full text-gray-400 text-xl select-none">
               Please select a conversation
             </div>
           )}
 
-          {selectedConversation && (
+          {id && selectedConversation && (
             <>
               <header className="flex items-center p-4 border-b border-gray-200 font-semibold text-lg text-gray-900">
-                Chat with {selectedConversation.name}
+                Chat with {selectedConversation.name || `Conversation #${selectedConversation.id}`}
               </header>
 
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                {selectedConversation.messages.map((msg, idx) => (
-                  <div
-                    key={idx}
-                    className={`max-w-xs rounded-md p-3 ${
-                      msg.from === "You"
-                        ? "bg-blue-500 text-white self-end"
-                        : "bg-gray-200 text-gray-800 self-start"
-                    }`}
-                  >
-                    <p>{msg.text}</p>
-                  </div>
-                ))}
+                {loading ? (
+                  <div className="text-gray-400">Loading messages...</div>
+                ) : messages.length === 0 ? (
+                  <div className="text-gray-400">No messages yet.</div>
+                ) : (
+                  messages.map((msg, idx) => {
+                    const isSentByUser = currentUserId && msg.sender_id === currentUserId;
+                    return (
+                      <div
+                        key={msg.id || idx}
+                        className={`flex ${isSentByUser ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div
+                          className={`max-w-xs rounded-md p-3 mb-2 '
+                            ${isSentByUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}
+                            ${isSentByUser ? 'self-end' : 'self-start'}
+                          `}
+                          style={{
+                            borderTopRightRadius: isSentByUser ? 0 : undefined,
+                            borderTopLeftRadius: !isSentByUser ? 0 : undefined,
+                          }}
+                        >
+                          <p>{msg.content || msg.text}</p>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
               </div>
 
               <form
