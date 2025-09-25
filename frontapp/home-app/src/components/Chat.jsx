@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import logoImage from "../images/home.webp"; 
-import userAvatar from "../images/image.webp"; 
+import userAvatar from "../images/image.webp";
 
-// Dummy conversations for fallback/demo
 
 const Chat = () => {
   const { id } = useParams();
@@ -106,9 +105,10 @@ const Chat = () => {
       {/* Main content */}
       <div className="flex flex-1 overflow-hidden bg-gray-50">
         {/* Conversations sidebar */}
-        <aside className="w-64 bg-white p-4 overflow-y-auto border-r border-gray-300">
-          <h2 className="text-gray-900 font-semibold mb-6">Messages</h2>
+        <aside className="w-64 bg-white p-4 overflow-y-auto border border-blue-400">
+          <h2 className="text-blue-400 text-3xl font-bold mb-6">Messages</h2>
           <ul>
+            // Show placeholder if no conversations
             {conversations.length === 0 && <li className="text-gray-400">No conversations</li>}
             {conversations.map((conv) => (
               <li
@@ -127,19 +127,21 @@ const Chat = () => {
         </aside>
 
         {/* Chat area */}
-        <main className="flex-1 flex flex-col bg-white">
+        <main className="flex-1 flex flex-col bg-blue-400">
           {!id && (
-            <div className="flex items-center justify-center h-full text-gray-400 text-xl select-none">
-              Please select a conversation
+            <div className="flex items-center justify-center h-full text-white text-xl select-none">
+              You can now start a conversation
             </div>
           )}
 
+          // Chat area when a conversation is selected
           {id && selectedConversation && (
             <>
               <header className="flex items-center p-4 border-b border-gray-200 font-semibold text-lg text-gray-900">
                 Chat with {selectedConversation.name || `Conversation #${selectedConversation.id}`}
               </header>
 
+              // Loading and messages area
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 {loading ? (
                   <div className="text-gray-400">Loading messages...</div>
@@ -153,6 +155,8 @@ const Chat = () => {
                         key={msg.id || idx}
                         className={`flex ${isSentByUser ? 'justify-end' : 'justify-start'}`}
                       >
+
+                        // Message bubble
                         <div
                           className={`max-w-xs rounded-md p-3 mb-2 '
                             ${isSentByUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}
@@ -171,6 +175,7 @@ const Chat = () => {
                 )}
               </div>
 
+              // Area where user can type and send new messages
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -182,7 +187,7 @@ const Chat = () => {
                   type="text"
                   className="flex-1 border border-gray-300 rounded-l-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
                   placeholder="Type your message..."
-                  value={messageText}
+                  value={messageText}  // Controlled input to ensure it clears after sending
                   onChange={(e) => setMessageText(e.target.value)}
                 />
                 <button

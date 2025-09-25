@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import logoImage from "../images/home.webp";
 import userAvatar from "../images/image.webp";
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
