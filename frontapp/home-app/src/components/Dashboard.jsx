@@ -1,13 +1,50 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import logoImage from "../images/home.webp";
 import userAvatar from "../images/image.webp";
 
+
 const Dashboard = () => {
-  const [posts, setPosts] = useState([
-    { title: "Post title 1", content: "This is the content of post 1" },
-    { title: "Post title 2", content: "This is the content of post 2" },
-  ]);
+  const navigate = useNavigate();
+  const [posts, setPosts] = useState([]);
+  // Fetch posts from backend on mount
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/posts");
+        if (response.ok) {
+          let data = await response.json();
+          // Sort by createdAt descending if available
+          if (data.length && data[0].createdAt) {
+            data = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          }
+          setPosts(data);
+        } else {
+          setPosts([]);
+        }
+      } catch (error) {
+        setPosts([]);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/users/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (response.ok) {
+        navigate("/");
+      } else {
+        alert("Logout failed");
+      }
+    } catch (error) {
+      alert("Logout error");
+    }
+  };
+
   const [inputValue, setInputValue] = useState("");
 
   const handleInputChange = (e) => {
@@ -15,12 +52,9 @@ const Dashboard = () => {
   };
 
   const handlePost = () => {
+    // This function should be updated to POST to backend if you want to create posts from frontend
     if (!inputValue.trim()) return;
-    const newPost = {
-      title: `Post title ${posts.length + 1}`,
-      content: inputValue.trim(),
-    };
-    setPosts([newPost, ...posts]);
+    // ...existing code for local post creation (optional, for demo only)
     setInputValue("");
   };
 
@@ -32,9 +66,12 @@ const Dashboard = () => {
           <img src={logoImage} alt="Logo" className="ml-4 md:ml-15 w-10 md:w-12 h-10 md:h-12 object-cover" />
         </div>
         <div className="flex items-center space-x-4">
-          <Link to="/" className="bg-blue-500 hover:bg-blue-600 text-white px-3 md:px-4 py-2 rounded mr-4 md:mr-15 text-sm md:text-base">
+          <button
+            onClick={handleLogout}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-3 md:px-4 py-2 rounded mr-4 md:mr-15 text-sm md:text-base"
+          >
             Disconnect
-          </Link>
+          </button>
           <div className="w-10 h-10 rounded-full border border-gray-400 flex items-center justify-center overflow-hidden">
             <img alt="User Avatar" src={userAvatar} />
           </div>
@@ -106,8 +143,8 @@ const Dashboard = () => {
 
   {/* Posts list filling remaining space, with side padding and rounded posts */}
   <div className="flex-1 overflow-auto px-4 md:px-24 lg:px-48 space-y-5">
-    {posts.map((post, index) => (
-      <div key={index} className="bg-white p-6 rounded-xl shadow-md">
+    {posts.map((post) => (
+      <div key={post.id} className="bg-white p-6 rounded-xl shadow-md">
         <h2 className="font-semibold text-lg mb-3">{post.title}</h2>
         <p className="text-gray-700">{post.content}</p>
       </div>
