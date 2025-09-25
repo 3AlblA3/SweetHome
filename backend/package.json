@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "server": "node server.js"
   },
   "author": "Alexandre Blanc",
   "license": "ISC",

@@ -3,18 +3,30 @@ import { useNavigate } from "react-router-dom";
 
 const Sign = () => {
   const navigate = useNavigate();
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const email = data.get("email");
     const password = data.get("password");
 
-    // Perform login logic here (e.g., API call)
-    console.log({ email, password });
+  try {
+    const response = await fetch("http://localhost:5000/users/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+      credentials: "include"
+    });
 
-    // On successful login, navigate to the dashboard
-    navigate("/dashboard");
+    if (response.ok) {
+      navigate("/dashboard");
+    } else {
+      const errorData = await response.json();
+      alert(errorData.error || "Login failed");
+    }
+  } catch (err) {
+    alert("Network error");
   }
+};
 
   return (
     <div class="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 bg-blue-400">
