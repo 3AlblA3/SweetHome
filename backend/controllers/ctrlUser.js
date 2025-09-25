@@ -19,7 +19,7 @@ exports.getAuthenticatedUser = async (req, res) => {
     try {
         const userId = req.auth.user_id;
         const user = await User.findByPk(userId, { 
-            attributes: ['id', 'first_name', 'last_name', 'email']  
+            attributes: ['id', 'first_name', 'last_name', 'email', 'picture_url']  
         });
 
         if (!user) {
@@ -30,7 +30,8 @@ exports.getAuthenticatedUser = async (req, res) => {
             id: user.id,
             first_name: user.first_name,
             last_name: user.last_name,
-            email: user.email
+            email: user.email,
+            picture_url: user.picture_url
         });
     } catch (error) {
         console.error('Error in getAuthenticatedUser:', error);
@@ -126,6 +127,8 @@ exports.getOneUser = async (req, res) => {
             first_name: user.first_name,
             last_name: user.last_name,
             email: user.email,
+            number: user.number,
+            picture_url: user.picture_url
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
