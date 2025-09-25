@@ -7,7 +7,7 @@ exports.getMessages = async (req, res) => {
         const { conversationId } = req.params;
         const messages = await Message.findAll({
             where: { conversation_id: conversationId },
-            order: [['sent_at', 'ASC']]
+            order: [['created_at', 'ASC']]
         });
 
         res.status(200).json(messages);
@@ -21,6 +21,9 @@ exports.sendMessage = async (req, res) => {
     try {
         const userId = req.auth.user_id;
         const { conversation_id, content } = req.body;
+
+        // Création d'un message. Attention!! Une conversation
+        //  doit exister avant l'envoi du message
 
         const newMessage = req.file ? {
             sender_id: userId,
@@ -39,7 +42,10 @@ exports.sendMessage = async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-};
+}
+
+// Marquer un message comme lu: 
+// Créer une valeur de date dans seen_at
 
 exports.markAsRead = async (req, res) => {
     try {
@@ -52,6 +58,8 @@ exports.markAsRead = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+// Mettre à jour un message
 
 exports.updateMessage = async (req, res, next) => {
     try {
@@ -75,6 +83,8 @@ exports.updateMessage = async (req, res, next) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+// Supprimer un message
 
 exports.deleteMessage = async (req, res) => {
     try {
