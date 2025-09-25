@@ -107,8 +107,8 @@ const Chat = () => {
         {/* Conversations sidebar */}
         <aside className="w-64 bg-white p-4 overflow-y-auto border border-blue-400">
           <h2 className="text-blue-400 text-3xl font-bold mb-6">Messages</h2>
+          
           <ul>
-            // Show placeholder if no conversations
             {conversations.length === 0 && <li className="text-gray-400">No conversations</li>}
             {conversations.map((conv) => (
               <li
@@ -134,7 +134,6 @@ const Chat = () => {
             </div>
           )}
 
-          // Chat area when a conversation is selected
           {id && selectedConversation && (
             <>
               <header className="flex items-center p-4 border-b border-gray-200 font-semibold text-lg text-gray-900">
